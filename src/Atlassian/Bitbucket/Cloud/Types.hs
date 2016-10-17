@@ -14,6 +14,11 @@ import           Atlassian.Internal.JSON
 
 --------------------------------------------------------------------------------
 
+type Owner = Text
+type Slug  = Text
+
+--------------------------------------------------------------------------------
+
 data PRLink = PRLink
   { html :: Text
   } deriving (Generic, Show)
@@ -62,14 +67,6 @@ instance Show PRState where
 
 instance ToHttpApiData PRState where
   toQueryParam = T.pack . show
-
---------------------------------------------------------------------------------
-
-newtype Owner = Owner Text
-  deriving (Eq, Generic, Show, FromJSON, ToJSON, FromHttpApiData, ToHttpApiData)
-
-newtype Slug = Slug Text
-  deriving (Eq, Generic, Show, FromJSON, ToJSON, FromHttpApiData, ToHttpApiData)
 
 --------------------------------------------------------------------------------
 
