@@ -18,10 +18,10 @@ import           Atlassian.Internal.JSON
 type Owner = Text
 type Slug  = Text
 newtype ISO8601 = ISO8601 { unISO8601 :: UTCTime }
-  deriving (Generic, Show)
+  deriving (Generic, Eq, Ord, Show)
 
 iso8601FormatString :: String
-iso8601FormatString = iso8601DateFormat (Just "%H:%M:%S.%QZ")
+iso8601FormatString = iso8601DateFormat (Just "%H:%M:%S%QZ")
 
 instance FromJSON ISO8601 where
   parseJSON = withText "iso8601" $ \x ->
@@ -92,6 +92,20 @@ instance FromJSON GetRepositoriesResponse where
 
 --------------------------------------------------------------------------------
 
+data PRSource = PRSource
+  { branch :: Maybe SourceBranch
+  } deriving (Generic, Show)
+
+instance FromJSON PRSource where
+  parseJSON = genericParseJSON defaultSnake
+
+data SourceBranch = SourceBranch
+  { name :: Text
+  } deriving (Generic, Show)
+
+instance FromJSON SourceBranch where
+  parseJSON = genericParseJSON defaultSnake
+
 data PR = PR
   { author       :: Maybe Author
   , title        :: Text
@@ -99,6 +113,7 @@ data PR = PR
   , taskCount    :: Maybe Int
   , links        :: PRLink
   , participants :: Maybe [Participant]
+  , source       :: PRSource
   } deriving (Generic, Show)
 
 instance FromJSON PR where
@@ -142,7 +157,7 @@ data SimplePipelineState = Pending
                          | Successful
                          | Failed
                          | Error
-  deriving (Generic, Show)
+  deriving (Generic, Show, Eq)
 
 data PipelineState = PipelineState
   { _type   :: PipelineStateType
@@ -174,12 +189,19 @@ data PipelineResultType = PipelineStateCompletedSuccessful
 instance FromJSON PipelineResultType where
   parseJSON = genericParseJSON $ (aesonDrop 1 snakeCase){constructorTagModifier = snakeCase}
 
+data PipelineTarget = PipelineTarget
+  { refName :: Text -- Generally the branch name
+  } deriving (Generic, Show)
+
+instance FromJSON PipelineTarget where
+  parseJSON = genericParseJSON defaultSnake
+
 data GetPipelinesResponse = GetPipelinesResponse
   { uuid        :: Text
   , completedOn :: Maybe ISO8601
   , createdOn   :: ISO8601
   , state       :: PipelineState
-  , refName     :: Text -- Generally the branch name
+  , target      :: PipelineTarget
   } deriving (Generic, Show)
 
 instance FromJSON GetPipelinesResponse where

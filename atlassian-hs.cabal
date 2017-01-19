@@ -23,6 +23,7 @@ library
                       aeson,
                       aeson-casing,
                       http-client,
+                      network-uri,
                       servant,
                       servant-client,
                       servant-server,

@@ -21,6 +21,6 @@ type GetPR                  = "repositories" :> Capture "owner"    Owner :> Capt
 type GetPRs                 = "repositories" :> Capture "username" Owner :> Capture "repo_slug" Slug :> "pullrequests" :> QueryParam "state" PRState :> PagedAPI PR
 type GetRepositoriesForTeam = "repositories" :> Capture "teamname" Owner :> PagedAPI GetRepositoriesResponse
 -- TODO: Pipelines wot ⚓️
-type GetPipelines           = "repositories" :> Capture "username" Owner :> Capture "repo_slug" Slug :> "pipelines/" :> Get '[JSON] GetPipelinesResponse
+type GetPipelines           = "repositories" :> Capture "username" Owner :> Capture "repo_slug" Slug :> "pipelines/" :> PagedAPI GetPipelinesResponse
 -- TODO: Even more wot 🍟
 type PipelineResults        = Capture "username" Owner :> Capture "repo_slug" Slug :> "addon" :> "pipelines" :> "home#!" :> "results" :> Capture "uuid" Text :> Raw

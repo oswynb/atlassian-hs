@@ -13,5 +13,5 @@ restClient = client restAPI
 getPR                  :: Owner -> Slug -> Int -> BasicAuthData -> Manager -> BaseUrl -> ClientM PR
 getPRs                 :: Owner -> Slug -> Maybe PRState -> Maybe Int -> BasicAuthData -> Manager -> BaseUrl -> ClientM (PagedResponse PR)
 getRepositoriesForTeam :: Owner -> Maybe Int -> BasicAuthData -> Manager -> BaseUrl -> ClientM (PagedResponse GetRepositoriesResponse)
-getPipelines           :: Owner -> Slug -> Manager -> BaseUrl -> ClientM GetPipelinesResponse
+getPipelines           :: Owner -> Slug -> Maybe Int -> BasicAuthData -> Manager -> BaseUrl -> ClientM (PagedResponse GetPipelinesResponse)
 getPR :<|> getPRs  :<|> getRepositoriesForTeam :<|> getPipelines :<|> pipelineResults = restClient
