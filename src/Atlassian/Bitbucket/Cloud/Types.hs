@@ -3,10 +3,11 @@
 module Atlassian.Bitbucket.Cloud.Types where
 
 import           Data.Aeson
+import           Data.Aeson.Casing
+import           Data.Aeson.Types
 import           Data.Text               (Text)
 import qualified Data.Text               as T
-import           Data.Vector             (Vector)
-import qualified Data.Vector             as V
+import           Data.Time
 import           GHC.Generics
 import           Servant.API
 
@@ -16,6 +17,18 @@ import           Atlassian.Internal.JSON
 
 type Owner = Text
 type Slug  = Text
+newtype ISO8601 = ISO8601 { unISO8601 :: UTCTime }
+  deriving (Generic, Show)
+
+iso8601FormatString :: String
+iso8601FormatString = iso8601DateFormat (Just "%H:%M:%S.%QZ")
+
+instance FromJSON ISO8601 where
+  parseJSON = withText "iso8601" $ \x ->
+    let parsed = parseTimeM False defaultTimeLocale iso8601FormatString (T.unpack x)
+    in case parsed of
+      Nothing -> fail "Unable to parse string to iso8601"
+      Just t  -> return $ ISO8601 t
 
 --------------------------------------------------------------------------------
 
@@ -25,8 +38,8 @@ data PRLink = PRLink
 
 instance FromJSON PRLink where
   parseJSON x = do
-    html <- withObject "links" (.: "html") x
-    actualLink <- withObject "html"  (.: "href") html
+    _html <- withObject "links" (.: "html") x
+    actualLink <- withObject "html"  (.: "href") _html
     return $ PRLink actualLink
 
 --------------------------------------------------------------------------------
@@ -122,5 +135,54 @@ data PagedResponse a = PagedResponse
 
 instance FromJSON a => FromJSON (PagedResponse a) where
   parseJSON = genericParseJSON defaultCamel
+
+--------------------------------------------------------------------------------
+
+data SimplePipelineState = Pending
+                         | Successful
+                         | Failed
+                         | Error
+  deriving (Generic, Show)
+
+data PipelineState = PipelineState
+  { _type   :: PipelineStateType
+  , _result :: Maybe PipelineResult -- Exists for completed pipelines
+  } deriving (Generic, Show)
+
+instance FromJSON PipelineState where
+  parseJSON = genericParseJSON $ (aesonDrop 1 snakeCase){omitNothingFields = True}
+
+data PipelineStateType = PipelineStateCompleted
+                       | PipelineStatePending
+  deriving (Generic, Show)
+
+instance FromJSON PipelineStateType where
+  parseJSON = genericParseJSON $ (aesonDrop 1 snakeCase){constructorTagModifier = snakeCase}
+
+data PipelineResult = PipelineResult
+  { _type :: PipelineResultType
+  } deriving (Generic, Show)
+
+instance FromJSON PipelineResult where
+  parseJSON = genericParseJSON $ aesonDrop 1 snakeCase
+
+data PipelineResultType = PipelineStateCompletedSuccessful
+                        | PipelineStateCompletedFailed
+                        | PipelineStateCompletedError
+  deriving (Generic, Show)
+
+instance FromJSON PipelineResultType where
+  parseJSON = genericParseJSON $ (aesonDrop 1 snakeCase){constructorTagModifier = snakeCase}
+
+data GetPipelinesResponse = GetPipelinesResponse
+  { uuid        :: Text
+  , completedOn :: Maybe ISO8601
+  , createdOn   :: ISO8601
+  , state       :: PipelineState
+  , refName     :: Text -- Generally the branch name
+  } deriving (Generic, Show)
+
+instance FromJSON GetPipelinesResponse where
+  parseJSON = genericParseJSON defaultSnake
 
 --------------------------------------------------------------------------------
