@@ -132,9 +132,26 @@ instance FromJSON Participant where
 
 data Author = Author
   { displayName :: Text
+  , links       :: AuthorLinks
   } deriving (Generic, Show)
 
 instance FromJSON Author where
+  parseJSON = genericParseJSON defaultSnake
+
+data AuthorLinks = AuthorLinks
+  { avatar :: HrefLink
+  } deriving (Generic, Show)
+
+instance FromJSON AuthorLinks where
+  parseJSON = genericParseJSON defaultSnake
+
+--------------------------------------------------------------------------------
+
+data HrefLink = HrefLink
+  { href :: Text
+  } deriving (Generic, Show)
+
+instance FromJSON HrefLink where
   parseJSON = genericParseJSON defaultSnake
 
 --------------------------------------------------------------------------------
