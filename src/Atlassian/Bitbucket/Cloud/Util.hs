@@ -18,7 +18,7 @@ numApprovals PR{..} = length $ filter approved (fromMaybe [] participants)
 
 prBranch :: PR -> Maybe Text
 prBranch PR{..} = case branch source of
-  Nothing -> Nothing
+  Nothing               -> Nothing
   Just (SourceBranch b) -> Just b
 
 pipelineLink :: Owner -> Slug -> GetPipelinesResponse -> URI
