@@ -3,6 +3,8 @@
 module Atlassian.Bitbucket.Server.Types where
 
 import           Data.Aeson
+import           Data.Aeson.Types
+import           Data.Char                          (toUpper)
 import           Data.Text                          (Text)
 import qualified Data.Text                          as T
 import           Data.Vector                        (Vector)
@@ -15,6 +17,23 @@ import           Atlassian.Internal.JSON
 
 --------------------------------------------------------------------------------
 
+type Project = Text
+type Slug    = Text
+
+--------------------------------------------------------------------------------
+
+data PagedResponse a = PagedResponse
+  { size       :: Int
+  , limit      :: Int
+  , isLastPage :: Bool
+  , values     :: [a]
+  , start      :: Int
+  } deriving (Generic, Show)
+
+instance FromJSON a => FromJSON (PagedResponse a) where
+  parseJSON = genericParseJSON defaultCamel
+
+--------------------------------------------------------------------------------
 data Author = Author
   { user :: User
   } deriving (Generic, Show)
@@ -121,3 +140,54 @@ instance Show PRState where
 
 instance ToHttpApiData PRState where
   toQueryParam = T.pack . show
+
+--------------------------------------------------------------------------------
+
+data GetReposResponse = GetReposResponse
+  { slug :: Slug
+  } deriving (Generic, Show)
+
+instance FromJSON GetReposResponse where
+  parseJSON = genericParseJSON defaultCamel
+
+--------------------------------------------------------------------------------
+
+newtype CommitInfo = CommitInfo
+  { id :: Text
+  } deriving (Generic, Show)
+
+instance FromJSON CommitInfo where
+  parseJSON = genericParseJSON defaultCamel
+
+--------------------------------------------------------------------------------
+
+data TaskCount = TaskCount
+  { open     :: Int
+  , resolved :: Int
+  } deriving (Generic, Show)
+
+instance FromJSON TaskCount where
+  parseJSON = genericParseJSON defaultCamel
+
+--------------------------------------------------------------------------------
+
+data CommitBuildStatus = CommitBuildStatus
+  { state :: BuildState
+  , url   :: Text
+  } deriving (Generic, Show)
+
+instance FromJSON CommitBuildStatus where
+  parseJSON = genericParseJSON defaultCamel
+
+data BuildState = Successful
+                | Failed
+                | InProgress
+  deriving (Generic, Eq, Show)
+
+instance ToJSON BuildState where
+  toJSON = genericToJSON defaultOptions{constructorTagModifier=map toUpper}
+
+instance FromJSON BuildState where
+  parseJSON = genericParseJSON defaultOptions{constructorTagModifier=map toUpper}
+
+--------------------------------------------------------------------------------

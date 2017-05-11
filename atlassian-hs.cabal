@@ -18,6 +18,8 @@ library
                       Atlassian.Bitbucket.Cloud.Client
                       Atlassian.Bitbucket.Cloud.Types
                       Atlassian.Bitbucket.Cloud.Util
+                      Atlassian.Bitbucket.Server.API
+                      Atlassian.Bitbucket.Server.Client
                       Atlassian.Bitbucket.Server.Types
                       Atlassian.Bitbucket.Server.Util
   other-modules:      Atlassian.Internal.JSON

@@ -17,6 +17,7 @@ import           Atlassian.Internal.JSON
 
 type Owner = Text
 type Slug  = Text
+
 newtype ISO8601 = ISO8601 { unISO8601 :: UTCTime }
   deriving (Generic, Eq, Ord, Show)
 
