@@ -1,4 +1,5 @@
-{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE RecordWildCards       #-}
 
 module Atlassian.Bitbucket.Cloud.Util where
 
@@ -34,3 +35,6 @@ getSimplePipelineState GetPipelinesResponse{state=PipelineState{..}} =
       PipelineStateCompletedSuccessful -> Successful
       PipelineStateCompletedFailed     -> Failed
       PipelineStateCompletedError      -> Error
+
+authorAvatarLink :: Author -> Text
+authorAvatarLink Author{..} = href $ avatar links
