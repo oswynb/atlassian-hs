@@ -1,4 +1,5 @@
 {-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE OverloadedLabels      #-}
 
 module Atlassian.Bitbucket.Server.Types where
 
@@ -7,7 +8,6 @@ import           Data.Aeson.Types
 import           Data.Char                          (toUpper)
 import           Data.Text                          (Text)
 import qualified Data.Text                          as T
-import           Data.Vector                        (Vector)
 import qualified Data.Vector                        as V
 import           Database.PostgreSQL.Simple.ToField
 import           GHC.Generics
@@ -34,7 +34,7 @@ instance FromJSON a => FromJSON (PagedResponse a) where
   parseJSON = genericParseJSON defaultCamel
 
 --------------------------------------------------------------------------------
-data Author = Author
+newtype Author = Author
   { user :: User
   } deriving (Generic, Show)
 
@@ -59,7 +59,7 @@ instance FromJSON User where
 
 --------------------------------------------------------------------------------
 
-data PRLink = PRLink
+newtype PRLink = PRLink
   { linkSelf :: Text
   } deriving (Generic, Show)
 
@@ -79,7 +79,8 @@ instance FromJSON PRLink where
 --------------------------------------------------------------------------------
 
 data Reviewer = Reviewer
-  { approved :: Bool
+  { user     :: User
+  , approved :: Bool
   } deriving (Generic, Show)
 
 instance ToField Reviewer where
@@ -101,7 +102,7 @@ data PR = PR
   , updatedDate :: Int
   , author      :: Author
   , links       :: PRLink
-  , reviewers   :: Vector Reviewer
+  , reviewers   :: [Reviewer]
   , fromRef     :: FromRef
   } deriving (Generic, Show)
 
@@ -143,7 +144,7 @@ instance ToHttpApiData PRState where
 
 --------------------------------------------------------------------------------
 
-data GetReposResponse = GetReposResponse
+newtype GetReposResponse = GetReposResponse
   { slug :: Slug
   } deriving (Generic, Show)
 

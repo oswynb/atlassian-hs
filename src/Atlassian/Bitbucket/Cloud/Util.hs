@@ -36,5 +36,5 @@ getSimplePipelineState GetPipelinesResponse{state=PipelineState{..}} =
       PipelineStateCompletedFailed     -> Failed
       PipelineStateCompletedError      -> Error
 
-authorAvatarLink :: Author -> Text
-authorAvatarLink Author{..} = href $ avatar links
+userAvatarLink :: User -> Text
+userAvatarLink User{..} = href $ avatar links

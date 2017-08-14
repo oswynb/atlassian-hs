@@ -33,7 +33,7 @@ instance FromJSON ISO8601 where
 
 --------------------------------------------------------------------------------
 
-data PRLink = PRLink
+newtype PRLink = PRLink
   { html :: Text
   } deriving (Generic, Show)
 
@@ -42,18 +42,6 @@ instance FromJSON PRLink where
     _html <- withObject "links" (.: "html") x
     actualLink <- withObject "html"  (.: "href") _html
     return $ PRLink actualLink
-
---------------------------------------------------------------------------------
-
-data Reviewer = Reviewer
-  { reviewerApproved :: Bool
-  } deriving (Generic, Show)
-
-instance ToJSON Reviewer where
-  toJSON = genericToJSON defaultCamel
-
-instance FromJSON Reviewer where
-  parseJSON = genericParseJSON defaultCamel
 
 --------------------------------------------------------------------------------
 
@@ -84,7 +72,7 @@ instance ToHttpApiData PRState where
 
 --------------------------------------------------------------------------------
 
-data GetRepositoriesResponse = GetRepositoriesResponse {
+newtype GetRepositoriesResponse = GetRepositoriesResponse {
   fullName :: Text
 } deriving (Generic, Show)
 
@@ -93,14 +81,14 @@ instance FromJSON GetRepositoriesResponse where
 
 --------------------------------------------------------------------------------
 
-data PRSource = PRSource
+newtype PRSource = PRSource
   { branch :: Maybe SourceBranch
   } deriving (Generic, Show)
 
 instance FromJSON PRSource where
   parseJSON = genericParseJSON defaultSnake
 
-data SourceBranch = SourceBranch
+newtype SourceBranch = SourceBranch
   { name :: Text
   } deriving (Generic, Show)
 
@@ -108,13 +96,14 @@ instance FromJSON SourceBranch where
   parseJSON = genericParseJSON defaultSnake
 
 data PR = PR
-  { author       :: Maybe Author
+  { author       :: Maybe User
   , title        :: Text
   , id           :: Int
   , taskCount    :: Maybe Int
   , links        :: PRLink
   , participants :: Maybe [Participant]
   , source       :: PRSource
+  , description  :: Text
   } deriving (Generic, Show)
 
 instance FromJSON PR where
@@ -123,7 +112,8 @@ instance FromJSON PR where
 --------------------------------------------------------------------------------
 
 data Participant = Participant
-  { approved :: Bool
+  { user     :: User
+  , approved :: Bool
   } deriving (Generic, Show)
 
 instance FromJSON Participant where
@@ -131,24 +121,24 @@ instance FromJSON Participant where
 
 --------------------------------------------------------------------------------
 
-data Author = Author
+data User = User
   { displayName :: Text
-  , links       :: AuthorLinks
+  , links       :: UserLinks
   } deriving (Generic, Show)
 
-instance FromJSON Author where
+instance FromJSON User where
   parseJSON = genericParseJSON defaultSnake
 
-data AuthorLinks = AuthorLinks
+newtype UserLinks = UserLinks
   { avatar :: HrefLink
   } deriving (Generic, Show)
 
-instance FromJSON AuthorLinks where
+instance FromJSON UserLinks where
   parseJSON = genericParseJSON defaultSnake
 
 --------------------------------------------------------------------------------
 
-data HrefLink = HrefLink
+newtype HrefLink = HrefLink
   { href :: Text
   } deriving (Generic, Show)
 
@@ -192,7 +182,7 @@ data PipelineStateType = PipelineStateCompleted
 instance FromJSON PipelineStateType where
   parseJSON = genericParseJSON $ (aesonDrop 1 snakeCase){constructorTagModifier = snakeCase}
 
-data PipelineResult = PipelineResult
+newtype PipelineResult = PipelineResult
   { _type :: PipelineResultType
   } deriving (Generic, Show)
 
@@ -207,7 +197,7 @@ data PipelineResultType = PipelineStateCompletedSuccessful
 instance FromJSON PipelineResultType where
   parseJSON = genericParseJSON $ (aesonDrop 1 snakeCase){constructorTagModifier = snakeCase}
 
-data PipelineTarget = PipelineTarget
+newtype PipelineTarget = PipelineTarget
   { refName :: Text -- Generally the branch name
   } deriving (Generic, Show)
 
