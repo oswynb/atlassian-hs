@@ -25,7 +25,7 @@ prBranch PR{..} = case branch source of
 pipelineLink :: Owner -> Slug -> GetPipelinesResponse -> URI
 pipelineLink owner slug response =
   let baseLink = safeLink restAPI (Proxy :: Proxy PipelineResults) owner slug (uuid response)
-  in baseLink{uriAuthority = Just (URIAuth "" "bitbucket.org/" "")}
+  in (linkURI baseLink){uriAuthority = Just (URIAuth "" "bitbucket.org/" "")}
 
 getSimplePipelineState :: GetPipelinesResponse -> SimplePipelineState
 getSimplePipelineState GetPipelinesResponse{state=PipelineState{..}} =
