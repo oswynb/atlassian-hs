@@ -1,4 +1,4 @@
-module Atlassian.Internal.JSON where
+module Atlassian.Internal.JSONx where
 
 import           Data.Aeson.Casing
 import           Data.Aeson.Types

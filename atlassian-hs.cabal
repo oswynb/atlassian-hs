@@ -22,7 +22,7 @@ library
                       Atlassian.Bitbucket.Server.Client
                       Atlassian.Bitbucket.Server.Types
                       Atlassian.Bitbucket.Server.Util
-  other-modules:      Atlassian.Internal.JSON
+  other-modules:      Atlassian.Internal.JSONx
   build-depends:      base >= 4.7 && < 5,
                       aeson,
                       aeson-casing,

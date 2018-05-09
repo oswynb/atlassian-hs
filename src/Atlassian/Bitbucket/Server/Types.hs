@@ -13,7 +13,7 @@ import           Database.PostgreSQL.Simple.ToField
 import           GHC.Generics
 import           Servant.API
 
-import           Atlassian.Internal.JSON
+import           Atlassian.Internal.JSONx
 
 --------------------------------------------------------------------------------
 
