@@ -4,7 +4,6 @@
 module Atlassian.Bitbucket.Server.Types where
 
 import           Data.Aeson
-import           Data.Aeson.Types
 import           Data.Char                          (toUpper)
 import           Data.Text                          (Text)
 import qualified Data.Text                          as T

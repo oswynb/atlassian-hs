@@ -7,7 +7,7 @@ import           Servant.Client
 import           Atlassian.Bitbucket.Server.API
 import           Atlassian.Bitbucket.Server.Types
 
-restClient :: Client RestAPI
+restClient :: Client ClientM RestAPI
 restClient = client restAPI
 
 getRepos     :: Project ->                          Maybe Int -> Maybe Int -> BasicAuthData -> ClientM (PagedResponse GetReposResponse)

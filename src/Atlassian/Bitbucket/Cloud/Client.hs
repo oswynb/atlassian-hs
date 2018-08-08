@@ -6,7 +6,7 @@ import           Servant.Client
 import           Atlassian.Bitbucket.Cloud.API
 import           Atlassian.Bitbucket.Cloud.Types
 
-restClient :: Client RestAPI
+restClient :: Client ClientM RestAPI
 restClient = client restAPI
 
 getPR                  :: Owner -> Slug -> Int -> BasicAuthData -> ClientM PR
