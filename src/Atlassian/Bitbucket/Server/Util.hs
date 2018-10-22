@@ -7,4 +7,4 @@ import           Prelude                          hiding (id)
 import           Atlassian.Bitbucket.Server.Types
 
 numApprovals :: PR -> Int
-numApprovals PR{..} = length $ filter approved reviewers
+numApprovals PR{..} = length $ filter (\x -> status x == Approved) reviewers

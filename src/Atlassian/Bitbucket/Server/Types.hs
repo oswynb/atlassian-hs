@@ -5,6 +5,7 @@ module Atlassian.Bitbucket.Server.Types where
 
 import           Data.Aeson
 import           Data.Char                          (toUpper)
+import           Data.Monoid
 import           Data.Text                          (Text)
 import qualified Data.Text                          as T
 import qualified Data.Vector                        as V
@@ -78,18 +79,34 @@ instance FromJSON PRLink where
 --------------------------------------------------------------------------------
 
 data Reviewer = Reviewer
-  { user     :: User
-  , approved :: Bool
+  { user      :: User
+  , status    :: ReviewerStatus
   } deriving (Generic, Show)
-
-instance ToField Reviewer where
-  toField = toField . approved
 
 instance ToJSON Reviewer where
   toJSON = genericToJSON defaultCamel
 
 instance FromJSON Reviewer where
   parseJSON = genericParseJSON defaultCamel
+
+data ReviewerStatus = Approved
+                    | Unapproved
+                    | NeedsWork
+  deriving (Generic, Eq, Show)
+
+instance ToJSON ReviewerStatus where
+  toJSON = genericToJSON defaultCamel
+
+decodeReviewerStatus :: Text -> Maybe ReviewerStatus
+decodeReviewerStatus "APPROVED"   = Just Approved
+decodeReviewerStatus "UNAPPROVED" = Just Unapproved
+decodeReviewerStatus "NEEDS_WORK" = Just NeedsWork
+decodeReviewerStatus _            = Nothing
+
+instance FromJSON ReviewerStatus where
+  parseJSON = withText "ReviewerStatus" $ \x -> case decodeReviewerStatus x of
+    Just x  -> return x
+    Nothing -> fail $ "Invalid Reviewer Status: " <> T.unpack x
 
 --------------------------------------------------------------------------------
 
